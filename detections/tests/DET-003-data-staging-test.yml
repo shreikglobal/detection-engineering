@@ -1,0 +1,31 @@
+test_id: TEST-DET-003
+rule_id: DET-003
+name: Data Staging Detection Test
+
+scenario:
+  description: >
+    Validate that suspicious data-staging activity is detected
+    during the controlled Purple Team exercise.
+
+preconditions:
+  - Detection rule DET-003 is available
+  - Test environment is isolated and controlled
+  - Dummy test data is used
+
+execution:
+  type: Controlled Purple Team exercise
+  expected_technique: T1074
+
+expected_result:
+  alert_generated: true
+  detection_status: PASS
+
+validation:
+  evidence_required:
+    - Alert or detection record
+    - Timestamp
+    - Rule identifier
+    - Data-staging evidence
+
+environment: Personal controlled test environment
+last_validated: 2026-08-18
