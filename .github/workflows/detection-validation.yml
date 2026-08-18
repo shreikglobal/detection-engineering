@@ -1,0 +1,47 @@
+name: Detection Validation
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  validate-detections:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate detection lifecycle
+        shell: bash
+        run: |
+          set -e
+
+          echo "Checking detection rules..."
+
+          for rule in detections/rules/*.yml; do
+            [ -f "$rule" ] || continue
+
+            id=$(grep '^id:' "$rule" | awk '{print $2}')
+            status=$(grep '^status:' "$rule" | awk '{print $2}')
+
+            echo "Checking $id — status: $status"
+
+            if [ "$status" = "Production" ]; then
+              test_path=$(grep -A2 '^test:' "$rule" | grep 'path:' | sed 's/.*path: //')
+
+              if [ -z "$test_path" ] || [ ! -f "$test_path" ]; then
+                echo "ERROR: $id is Production but has no valid test."
+                echo "Production deployment BLOCKED."
+                exit 1
+              fi
+
+              echo "PASS: $id has a valid test."
+            fi
+          done
+
+          echo "Detection validation completed successfully."
