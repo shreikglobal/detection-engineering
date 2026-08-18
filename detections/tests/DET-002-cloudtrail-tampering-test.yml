@@ -1,0 +1,29 @@
+test_id: TEST-DET-002
+rule_id: DET-002
+name: CloudTrail Tampering Detection Test
+
+scenario:
+  description: >
+    Validate that suspicious CloudTrail tampering activity
+    is detected during controlled security testing.
+
+preconditions:
+  - Detection rule DET-002 is enabled
+  - Test environment is isolated and controlled
+
+execution:
+  type: Controlled security test
+  expected_technique: T1562.008
+
+expected_result:
+  alert_generated: true
+  detection_status: PASS
+
+validation:
+  evidence_required:
+    - Alert or detection record
+    - Timestamp
+    - Rule identifier
+
+environment: Personal AWS test environment
+last_validated: 2026-08-18
