@@ -1,0 +1,15 @@
+id: DET-001
+name: Suspicious PowerShell Execution
+owner: Vedant Kale
+status: Draft
+
+mitre:
+  tactic: Execution
+  technique: T1059.001
+
+test:
+  required: true
+  path: detections/tests/DET-001-test.yml
+
+signal_to_noise_target: 0.95
+last_validated: 2026-08-18
