@@ -17,37 +17,50 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Validate detection lifecycle
-        shell: bash
         run: |
-          set -e
+          python3 <<'PY'
+          from pathlib import Path
+          import sys
 
-          echo "Checking detection rules..."
+          print("Checking detection rules...")
 
-          for rule in detections/rules/*.yml; do
-            [ -f "$rule" ] || continue
+          rules_dir = Path("detections/rules")
+          failed = False
 
-            id=$(grep '^id:' "$rule" | awk '{print $2}')
-            status=$(grep '^status:' "$rule" | awk '{print $2}')
+          for rule in sorted(rules_dir.glob("*.yml")):
+              content = rule.read_text()
 
-            echo "Checking $id — status: $status"
+              rule_id = None
+              status = None
+              test_path = None
 
-            if [ "$status" = "Production" ]; then
-              test_path=$(grep -A2 '^test:' "$rule" | grep 'path:' | sed 's/.*path: //' || true)
+              for line in content.splitlines():
+                  stripped = line.strip()
 
-              if [ -z "$test_path" ] || [ ! -f "$test_path" ]; then
-                echo "ERROR: $id is Production but has no valid test."
-                echo "Production deployment BLOCKED."
-                exit 1
-              fi
+                  if stripped.startswith("id:"):
+                      rule_id = stripped.split(":", 1)[1].strip()
 
-              echo "PASS: $id has a valid test."
-            fi
-          done
+                  elif stripped.startswith("status:"):
+                      status = stripped.split(":", 1)[1].strip()
 
-          echo "Detection validation completed successfully."
+                  elif stripped.startswith("path:"):
+                      test_path = stripped.split(":", 1)[1].strip()
 
-              echo "PASS: $id has a valid test."
-            fi
-          done
+              print(f"Checking {rule_id} — status: {status}")
 
-          echo "Detection validation completed successfully."
+              if status == "Production":
+                  if not test_path or not Path(test_path).is_file():
+                      print(
+                          f"ERROR: {rule_id} is Production "
+                          "but has no valid test."
+                      )
+                      print("Production deployment BLOCKED.")
+                      failed = True
+                  else:
+                      print(f"PASS: {rule_id} has a valid test.")
+
+          if failed:
+              sys.exit(1)
+
+          print("Detection validation completed successfully.")
+          PY
