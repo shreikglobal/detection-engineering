@@ -1,0 +1,12 @@
+detection_id: DET-001
+name: Suspicious PowerShell Execution Test
+
+description: >
+  Validates that the DET-001 detection identifies
+  suspicious PowerShell execution activity.
+
+expected_result:
+  alert: true
+  severity: high
+
+status: pending
