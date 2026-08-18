@@ -1,7 +1,7 @@
 id: DET-002
 name: Test Production Detection Without Test
 owner: Vedant Kale
-status: Production
+status: Draft
 
 mitre:
   tactic: Execution
