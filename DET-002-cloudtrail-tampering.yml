@@ -1,0 +1,25 @@
+rule_id: DET-002
+name: CloudTrail Tampering Detection
+status: Tested
+lifecycle: Tested
+severity: High
+
+description: >
+  Detects suspicious attempts to modify or interfere with
+  CloudTrail logging during controlled security testing.
+
+framework:
+  mitre_attack:
+    tactic: Defense Evasion
+    technique: T1562.008
+
+validation:
+  test_environment: Personal AWS test environment
+  test_type: Controlled security test
+  result: Detected
+
+response:
+  action: Alert and investigate
+
+owner: Detection Engineering
+last_validated: 2026-08-18
