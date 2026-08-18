@@ -32,13 +32,19 @@ jobs:
             echo "Checking $id — status: $status"
 
             if [ "$status" = "Production" ]; then
-              test_path=$(grep -A2 '^test:' "$rule" | grep 'path:' | sed 's/.*path: //')
+              test_path=$(grep -A2 '^test:' "$rule" | grep 'path:' | sed 's/.*path: //' || true)
 
               if [ -z "$test_path" ] || [ ! -f "$test_path" ]; then
                 echo "ERROR: $id is Production but has no valid test."
                 echo "Production deployment BLOCKED."
                 exit 1
               fi
+
+              echo "PASS: $id has a valid test."
+            fi
+          done
+
+          echo "Detection validation completed successfully."
 
               echo "PASS: $id has a valid test."
             fi
