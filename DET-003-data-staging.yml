@@ -1,0 +1,30 @@
+rule_id: DET-003
+name: Data Staging Detection
+status: Draft
+lifecycle: Draft
+severity: High
+
+description: >
+  Detects suspicious data-staging activity observed during
+  the controlled Purple Team exercise.
+
+framework:
+  mitre_attack:
+    tactic: Collection
+    technique: T1074
+
+validation:
+  test_environment: Personal AWS test environment
+  test_type: Controlled Purple Team exercise
+  result: Detected
+
+sla:
+  status: Breached
+  action: Demote to Draft
+  reason: Detection performance did not meet the defined SLA target
+
+response:
+  action: Alert, investigate and tune detection
+
+owner: Detection Engineering
+last_validated: 2026-08-18
